@@ -1,26 +1,25 @@
-import { useState, useEffect } from "react";
-import { getActivities } from "../api/activities";
+import useQuery from "../api/useQuery";
+import { useAuth } from "../auth/AuthContext";
 
 import ActivityList from "./ActivityList";
 import ActivityForm from "./ActivityForm";
 
 export default function ActivitiesPage() {
-  const [activities, setActivities] = useState([]);
+  const { token } = useAuth();
+  const {
+    data: activities,
+    loading,
+    error,
+  } = useQuery("/activities", "activities");
 
-  const syncActivities = async () => {
-    const data = await getActivities();
-    setActivities(data);
-  };
-
-  useEffect(() => {
-    syncActivities();
-  }, []);
+  if (loading) return <p>Loading activities...</p>;
+  if (error) return <p role="alert">{error}</p>;
 
   return (
     <>
       <h1>Activities</h1>
-      <ActivityList activities={activities} />
-      <ActivityForm syncActivities={syncActivities} />
+      <ActivityList activities={activities || []} />
+      {token && <ActivityForm />}
     </>
   );
 }

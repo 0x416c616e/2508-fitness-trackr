@@ -1,24 +1,20 @@
 import { useState } from "react";
-import { createActivity } from "../api/activities";
-import { useAuth } from "../auth/AuthContext";
+import useMutation from "../api/useMutation";
 
 /** Form for a user to create a new activity with a name and description. */
-export default function ActivityForm({ syncActivities }) {
-  const { token } = useAuth();
-
-  const [error, setError] = useState(null);
+export default function ActivityForm() {
+  const { mutate, error } = useMutation("/activities", "POST", ["activities"]);
 
   const tryCreateActivity = async (formData) => {
-    setError(null);
-
     const name = formData.get("name");
     const description = formData.get("description");
 
     try {
-      await createActivity(token, { name, description });
-      syncActivities();
+      await mutate({ name, description });
+      // Clear the form on success
+      formData.target.reset();
     } catch (e) {
-      setError(e.message);
+      // Error is already in state from useMutation
     }
   };
 
@@ -28,11 +24,11 @@ export default function ActivityForm({ syncActivities }) {
       <form action={tryCreateActivity}>
         <label>
           Name
-          <input type="text" name="name" />
+          <input type="text" name="name" required />
         </label>
         <label>
           Description
-          <input type="text" name="description" />
+          <input type="text" name="description" required />
         </label>
         <button>Add activity</button>
       </form>

@@ -5,13 +5,16 @@ import Layout from "./layout/Layout";
 
 import { AuthProvider } from "./auth/AuthContext";
 import { PageProvider } from "./layout/PageContext";
+import { ApiProvider } from "./api/ApiContext"; // ADD THIS
 
 createRoot(document.getElementById("root")).render(
   <AuthProvider>
-    <PageProvider>
-      <Layout>
-        <App />
-      </Layout>
-    </PageProvider>
-  </AuthProvider>,
+    <ApiProvider>
+      <PageProvider>
+        <Layout>
+          <App />
+        </Layout>
+      </PageProvider>
+    </ApiProvider>
+  </AuthProvider>
 );
